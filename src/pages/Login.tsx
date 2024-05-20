@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../B2Bit Logo.png";
 import { Formik, Form, Field } from "formik";
-import { LoginApi } from "../service/Api";
+import { LoginApi } from "../services/Api";
 import { useNavigate } from "react-router-dom";
 
 export interface FormValues {
@@ -9,8 +9,13 @@ export interface FormValues {
   password: string;
 }
 
+export interface FormValuesError {
+  email: string;
+  password: string;
+}
+
 const validate = (values: FormValues) => {
-  const errors: FormValues = {
+  const errors: FormValuesError = {
     email: "",
     password: "",
   };
@@ -38,7 +43,7 @@ const Login = () => {
     if (localStorage.getItem("token")) {
       navigate("/profile");
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="bg-white md:bg-lightgray">
@@ -57,12 +62,15 @@ const Login = () => {
           <div className="w-full max-w-full">
             <Formik
               initialValues={initialValues}
-              onSubmit={(values, actions) => {
+              onSubmit={async (
+                values: FormValues,
+                actions: { setSubmitting: (arg0: boolean) => void }
+              ) => {
                 actions.setSubmitting(false);
                 const val = validate(values);
                 if (val.email === "" && val.password === "") {
-                  LoginApi(values.email, values.password);
-                  navigate('/profile')
+                  await LoginApi(values.email, values.password);
+                  navigate("/profile");
                 } else {
                   setErrors(val);
                 }
@@ -72,6 +80,7 @@ const Login = () => {
                 <label className="font-semibold text-lg" htmlFor="email">
                   Email
                 </label>
+                <p className="text-sm text-red">{errors.email}</p>
                 <Field
                   className="input"
                   id="email"
@@ -79,13 +88,14 @@ const Login = () => {
                   placeholder="@gmail.com"
                   type="email"
                 />
-                <div>{errors.email}</div>
+
                 <label
                   className="font-semibold text-lg mt-3"
                   htmlFor="password"
                 >
                   Password
                 </label>
+                <p className="text-sm text-red">{errors.password}</p>
                 <Field
                   className="input"
                   id="password"
@@ -93,7 +103,7 @@ const Login = () => {
                   placeholder="***************"
                   type="password"
                 />
-                <div>{errors.password}</div>
+
                 <button className="primary-btn mt-6 " type="submit">
                   Sign in
                 </button>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
-import { getProfile } from "../service/Api";
+import { getProfile } from "../services/Api";
 
 const Profile = () => {
   const [image, setImage] = useState<string>();
@@ -13,20 +13,20 @@ const Profile = () => {
   useEffect(() => {
     if (!localStorage.getItem("token")) {
       navigate("/");
-    }else{
+    } else {
       getProfile().then(async (response) => {
         setImage(response.data.avatar.high);
         setName(
           response.data.name +
-            (response.data.last_name !== undefined ? response.data.last_name : "")
+            (response.data.last_name !== undefined
+              ? response.data.last_name
+              : "")
         );
         setEmail(response.data.email);
         console.log(response);
       });
     }
-  }, []);
-
-  
+  }, [navigate]);
 
   return (
     <div>
@@ -39,7 +39,11 @@ const Profile = () => {
                 <h3 className="text-center text-sm pt-5 px-10">
                   Profile picture
                 </h3>
-                <img src={image} alt="profile" className="h-16 w-16 rounded-lg" />
+                <img
+                  src={image}
+                  alt="profile"
+                  className="h-16 w-16 rounded-lg"
+                />
               </div>
               <div className="w-full px-8 pb-6 flex flex-col mt-5">
                 <label>

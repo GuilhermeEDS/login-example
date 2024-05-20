@@ -2,18 +2,16 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  let width = window.innerWidth;
   const navigate = useNavigate();
 
-
-  const Logout = ()=>{
-    localStorage.removeItem('token')
-    navigate('/')
-  }
+  const Logout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
 
   return (
     <header className="bg-white flex flex-col px-3 md:px-10 py-3 mb-10 items-end">
-      <a onClick={Logout} className="primary-btn max-w-56">
+      <button onClick={Logout} className="primary-btn max-w-56">
         <span className="flex flex-row justify-center">
           <svg
             className="h-6 w-6 md:hidden pr-1 md:pr-0"
@@ -31,7 +29,7 @@ const Navbar = () => {
           </svg>
           Logout
         </span>
-      </a>
+      </button>
     </header>
   );
 };
